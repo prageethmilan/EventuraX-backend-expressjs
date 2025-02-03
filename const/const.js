@@ -1,5 +1,3 @@
-const BASE_PATH = '/api/v1'
-
 // http status
 const STATUS_500 = {
     message: "Something went wrong",

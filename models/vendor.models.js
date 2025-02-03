@@ -18,7 +18,18 @@ const vendorScheme = new mongoose.Schema({
             type: String,
             required: true
         },
-
+        googleId: {
+            type: String,
+            required: false,
+            unique: true,
+            sparse: true, // Allows multiple null values
+        },
+        facebookId: {
+            type: String,
+            required: false,
+            unique: true,
+            sparse: true, // Allows multiple null values
+        },
     }, {timestamps: true}
 );
 

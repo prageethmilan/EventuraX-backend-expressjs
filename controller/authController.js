@@ -49,4 +49,41 @@ const login = async (req, resp) => {
     }
 }
 
-module.exports = {login}
+const socialLogin = async (req, res) => {
+    console.log(req)
+    try {
+        const {email, firstName, lastName, googleId, facebookId} = req.body;
+
+        if (!email) {
+            return res.status(400).json({message: 'Email is required'});
+        }
+
+        let vendor = await Vendor.findOne({email});
+
+        if (!vendor) {
+            vendor = new Vendor({
+                firstName,
+                lastName,
+                email,
+                password: googleId || facebookId, // Store social ID as password (not used for login)
+                googleId: googleId || null,
+                facebookId: facebookId || null
+            });
+
+            await vendor.save();
+        }
+
+        const token = jwt.sign(
+            {id: vendor._id, email: vendor.email, name: vendor.firstName + ' ' + vendor.lastName},
+            process.env.JWT_SECRET_KEY,
+            {expiresIn: '24h'}
+        );
+
+        res.status(200).json({message: 'Social login successful', access_token: token, vendor});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Server error'});
+    }
+}
+
+module.exports = {login, socialLogin}
