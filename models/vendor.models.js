@@ -30,6 +30,12 @@ const vendorScheme = new mongoose.Schema({
             // unique: true,
             sparse: true, // Allows multiple null values
         },
+        twitterId: {
+            type: String,
+            required: false,
+            // unique: true,
+            sparse: true, // Allows multiple null values
+        },
         socialId: {
             type: String,
             required: false,

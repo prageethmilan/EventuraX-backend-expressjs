@@ -51,18 +51,18 @@ const login = async (req, resp) => {
 
 const socialLogin = async (req, res) => {
     try {
-        const {email, firstName, lastName, googleId, facebookId, socialId} = req.body;
+        const {email, firstName, lastName, googleId, facebookId, twitterId, socialId} = req.body;
 
         let vendor = await Vendor.findOne({socialId});
-
         if (!vendor) {
             vendor = new Vendor({
-                firstName,
-                lastName,
-                email,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
                 password: googleId || facebookId, // Store social ID as password (not used for login)
                 googleId: googleId || null,
                 facebookId: facebookId || null,
+                twitterId: twitterId || null,
                 socialId
             });
 
