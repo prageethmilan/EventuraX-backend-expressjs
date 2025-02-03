@@ -11,25 +11,30 @@ const vendorScheme = new mongoose.Schema({
         },
         email: {
             type: String,
-            required: true,
-            unique: true
+            required: false,
+            // unique: true
         },
         password: {
             type: String,
-            required: true
+            required: false
         },
         googleId: {
             type: String,
             required: false,
-            unique: true,
+            // unique: true,
             sparse: true, // Allows multiple null values
         },
         facebookId: {
             type: String,
             required: false,
-            unique: true,
+            // unique: true,
             sparse: true, // Allows multiple null values
         },
+        socialId: {
+            type: String,
+            required: false,
+            // unique: true
+        }
     }, {timestamps: true}
 );
 

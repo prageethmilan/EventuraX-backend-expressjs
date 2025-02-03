@@ -50,15 +50,10 @@ const login = async (req, resp) => {
 }
 
 const socialLogin = async (req, res) => {
-    console.log(req)
     try {
-        const {email, firstName, lastName, googleId, facebookId} = req.body;
+        const {email, firstName, lastName, googleId, facebookId, socialId} = req.body;
 
-        if (!email) {
-            return res.status(400).json({message: 'Email is required'});
-        }
-
-        let vendor = await Vendor.findOne({email});
+        let vendor = await Vendor.findOne({socialId});
 
         if (!vendor) {
             vendor = new Vendor({
@@ -67,14 +62,20 @@ const socialLogin = async (req, res) => {
                 email,
                 password: googleId || facebookId, // Store social ID as password (not used for login)
                 googleId: googleId || null,
-                facebookId: facebookId || null
+                facebookId: facebookId || null,
+                socialId
             });
 
             await vendor.save();
         }
 
         const token = jwt.sign(
-            {id: vendor._id, email: vendor.email, name: vendor.firstName + ' ' + vendor.lastName},
+            {
+                id: vendor._id,
+                email: vendor.email,
+                name: vendor.firstName + ' ' + vendor.lastName,
+                socialId: vendor.socialId
+            },
             process.env.JWT_SECRET_KEY,
             {expiresIn: '24h'}
         );
