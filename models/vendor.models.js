@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Districts = require("../enums/districts");
 
 const vendorScheme = new mongoose.Schema({
         firstName: {
@@ -40,6 +41,11 @@ const vendorScheme = new mongoose.Schema({
             type: String,
             required: false,
             // unique: true
+        },
+        location: {
+            type: String,
+            enum: Object.values(Districts),
+            required: false
         }
     }, {timestamps: true}
 );
