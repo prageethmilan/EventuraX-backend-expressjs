@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Districts = require("../enums/districts");
 
-const vendorScheme = new mongoose.Schema({
+const vendorSchema = new mongoose.Schema({
         firstName: {
             type: String,
             required: false
@@ -50,4 +50,4 @@ const vendorScheme = new mongoose.Schema({
     }, {timestamps: true}
 );
 
-module.exports = mongoose.model('Vendor', vendorScheme)
+module.exports = mongoose.model('Vendor', vendorSchema)

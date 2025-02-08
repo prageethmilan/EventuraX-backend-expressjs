@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const reviewScheme = new mongoose.Scheme({
+const reviewSchema = new mongoose.Scheme({
     userName: {
         type: String,
         required: true
@@ -26,4 +26,4 @@ const reviewScheme = new mongoose.Scheme({
     }
 });
 
-module.exports = mongoose.model('Review', reviewScheme);
+module.exports = mongoose.model('Review', reviewSchema);
