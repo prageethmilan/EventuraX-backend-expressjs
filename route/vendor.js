@@ -3,6 +3,6 @@ const router = express.Router()
 
 const vendorController = require('../controller/vendorController')
 
-router.post('/login', vendorController.saveVendor)
+router.post('/sign-up', vendorController.saveVendor)
 
 module.exports = router
