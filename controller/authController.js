@@ -29,7 +29,7 @@ const login = async (req, resp) => {
             name: vendor.firstName + ' ' + vendor.lastName
         };
 
-        const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '24h'});
+        const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '30d'});
         return resp.status(200).json({
             message: 'Login successful',
             access_token: token,
@@ -69,7 +69,7 @@ const socialLogin = async (req, res) => {
                 socialId: vendor.socialId
             },
             process.env.JWT_SECRET_KEY,
-            {expiresIn: '24h'}
+            {expiresIn: '30d'}
         );
 
         res.status(200).json({message: 'Social login successful', access_token: token, vendor});
