@@ -3,7 +3,7 @@ const STATUS_500 = () => {
     return {
         message: "Something went wrong",
         data: null,
-        status: false
+        success: false
     }
 }
 
@@ -14,18 +14,18 @@ const STATUS_400 = (message) => {
     }
 }
 
-const STATUS_200 = (msg, status) => {
+const STATUS_200 = (msg, success) => {
     return {
         message: msg,
-        status: status
+        success: success
     }
 }
 
-const STATUS_200_WITH_DATA = (data, status, msg = 'Operation Successfully') => {
+const STATUS_200_WITH_DATA = (data, success, msg = 'Operation Successfully') => {
     return {
         message: msg,
         data,
-        status
+        success
     }
 }
 

@@ -13,9 +13,9 @@ const saveVendor = async (req, resp) => {
         const existingVendor = await Vendor.findOne({email});
 
         if (existingVendor && existingVendor.socialId !== null) {
-            return resp.status(200).json(STATUS_200('User already sign up for system using this email via social media signup', true));
+            return resp.status(200).json(STATUS_200('User already sign up for system using this email via social media signup', false));
         } else if (existingVendor && existingVendor.socialId === null) {
-            return resp.status(200).json(STATUS_200('Email already exists', true))
+            return resp.status(200).json(STATUS_200('Email already exists', false))
         }
 
         bcrypt.hash(password, 10, async (err, hashedPassword) => {

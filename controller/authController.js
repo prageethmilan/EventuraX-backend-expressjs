@@ -72,7 +72,7 @@ const socialLogin = async (req, res) => {
             {expiresIn: '30d'}
         );
 
-        res.status(200).json({message: 'Social login successful', access_token: token, vendor});
+        res.status(200).json({message: 'Login successful', access_token: token, vendor});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: 'Server error'});
