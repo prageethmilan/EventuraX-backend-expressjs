@@ -7,7 +7,7 @@ const saveVendor = async (req, resp) => {
         const {firstName, lastName, email, password} = req.body;
 
         if (!firstName || !lastName || !email || !password) {
-            return resp.status(400).json(STATUS_400('All fields are required'));
+            return resp.status(400).json(STATUS_400('All fields are required', false));
         }
 
         const existingVendor = await Vendor.findOne({email});

@@ -33,7 +33,8 @@ const login = async (req, resp) => {
         return resp.status(200).json({
             message: 'Login successful',
             access_token: token,
-            vendor: payload
+            vendor: payload,
+            success: true
         });
     } catch (e) {
         console.error(e);
@@ -72,7 +73,7 @@ const socialLogin = async (req, res) => {
             {expiresIn: '30d'}
         );
 
-        res.status(200).json({message: 'Login successful', access_token: token, vendor});
+        res.status(200).json({message: 'Login successful', access_token: token, vendor, success: true});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: 'Server error'});

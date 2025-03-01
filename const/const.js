@@ -7,10 +7,11 @@ const STATUS_500 = () => {
     }
 }
 
-const STATUS_400 = (message) => {
+const STATUS_400 = (message, success) => {
     return {
         message,
-        data: null
+        data: null,
+        success
     }
 }
 
