@@ -74,7 +74,7 @@ const updatePassword = async (req, resp) => {
         vendor.password = await bcrypt.hash(newPassword, salt);
         await vendor.save();
 
-        resp.status(200).json(STAddUS_200("Password updated successfully", true));
+        resp.status(200).json(STATUS_200("Password updated successfully", true));
     } catch (error) {
         console.error(error);
         resp.status(500).json(STATUS_500);
