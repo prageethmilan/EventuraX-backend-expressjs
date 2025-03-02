@@ -26,7 +26,7 @@ const login = async (req, resp) => {
         const payload = {
             id: vendor._id,
             email: vendor.email,
-            name: vendor.firstName + ' ' + vendor.lastName
+            name: vendor.name
         };
 
         const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '30d'});
@@ -44,13 +44,12 @@ const login = async (req, resp) => {
 
 const socialLogin = async (req, res) => {
     try {
-        const {email, firstName, lastName, googleId, facebookId, twitterId, socialId} = req.body;
+        const {email, name, googleId, facebookId, twitterId, socialId} = req.body;
 
         let vendor = await Vendor.findOne({socialId});
         if (!vendor) {
             vendor = new Vendor({
-                firstName: firstName,
-                lastName: lastName,
+                name: name,
                 email: email,
                 password: googleId || facebookId, // Store social ID as password (not used for login)
                 googleId: googleId || null,
@@ -66,7 +65,7 @@ const socialLogin = async (req, res) => {
             {
                 id: vendor._id,
                 email: vendor.email,
-                name: vendor.firstName + ' ' + vendor.lastName,
+                name: vendor.name,
                 socialId: vendor.socialId
             },
             process.env.JWT_SECRET_KEY,

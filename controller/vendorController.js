@@ -1,12 +1,12 @@
-const {STATUS_500, STATUS_400, STATUS_200} = require('../const/const');
+const {STATUS_500, STATUS_400, STATUS_200, STATUS_200_WITH_DATA} = require('../const/const');
 const bcrypt = require('bcryptjs');
 const Vendor = require('../models/vendor.models');
 
 const saveVendor = async (req, resp) => {
     try {
-        const {firstName, lastName, email, password} = req.body;
+        const {name, email, password} = req.body;
 
-        if (!firstName || !lastName || !email || !password) {
+        if (!name || !email || !password) {
             return resp.status(400).json(STATUS_400('All fields are required', false));
         }
 
@@ -24,14 +24,9 @@ const saveVendor = async (req, resp) => {
             }
 
             const vendor = new Vendor({
-                firstName: firstName,
-                lastName: lastName,
+                name: name,
                 email: email,
-                password: hashedPassword, // Store social ID as password (not used for login)
-                googleId: null,
-                facebookId: null,
-                twitterId: null,
-                socialId: null
+                password: hashedPassword // Store social ID as password (not used for login)
             });
 
             try {
@@ -81,7 +76,30 @@ const updatePassword = async (req, resp) => {
     }
 };
 
+const getVendorDetails = async (req, res) => {
+    try {
+        const {vendorId} = req.params;
+
+        if (!vendorId) {
+            return res.status(400).json(STATUS_400("Vendor ID is required", false));
+        }
+
+        const vendor = await Vendor.findById(vendorId).select("-password");
+
+        if (!vendor) {
+            return res.status(404).json(STATUS_400("Vendor not found", false));
+        }
+
+        res.status(200).json(STATUS_200_WITH_DATA(vendor, true, ""));
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json(STATUS_500);
+    }
+}
+
 module.exports = {
     saveVendor,
-    updatePassword
+    updatePassword,
+    getVendorDetails
 }
