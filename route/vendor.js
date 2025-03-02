@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const upload = require("../middleware/uploadMiddleware")
 
 const vendorController = require('../controller/vendorController')
 
@@ -7,5 +8,6 @@ router.post('/sign-up', vendorController.saveVendor)
 router.post('/update-password', vendorController.updatePassword)
 router.get('/:vendorId', vendorController.getVendorDetails)
 router.put('/:vendorId', vendorController.updateVendor)
+router.put('/:vendorId/upload-logo', upload.single("logo"), vendorController.updateVendorLogo);
 
 module.exports = router

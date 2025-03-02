@@ -41,3 +41,5 @@ frontend
 /.idea/apiit-sms-admin-frontend.iml
 .idea/sonarlint
 /.idea/sonarlint
+
+/uploads
