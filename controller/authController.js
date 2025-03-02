@@ -26,7 +26,8 @@ const login = async (req, resp) => {
         const payload = {
             id: vendor._id,
             email: vendor.email,
-            name: vendor.name
+            name: vendor.name,
+            isVerified: vendor.verified
         };
 
         const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '30d'});
@@ -66,7 +67,8 @@ const socialLogin = async (req, res) => {
                 id: vendor._id,
                 email: vendor.email,
                 name: vendor.name,
-                socialId: vendor.socialId
+                socialId: vendor.socialId,
+                isVerified: vendor.verified
             },
             process.env.JWT_SECRET_KEY,
             {expiresIn: '30d'}

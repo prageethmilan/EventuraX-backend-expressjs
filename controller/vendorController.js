@@ -98,8 +98,43 @@ const getVendorDetails = async (req, res) => {
     }
 }
 
+const updateVendor = async (req, res) => {
+    try {
+        const {vendorId} = req.params;
+        const {name, email, mobileNumber, website, location, description, address} = req.body;
+
+        if (!vendorId) {
+            return res.status(400).json(STATUS_400("Vendor ID is required", false));
+        }
+
+        const vendor = await Vendor.findById(vendorId).select("-password");
+
+        if (!vendor) {
+            return res.status(404).json(STATUS_400("Vendor not found", false));
+        }
+
+        if (name) vendor.name = name;
+        if (email) vendor.email = email;
+        if (mobileNumber) vendor.mobileNumber = mobileNumber;
+        if (website) vendor.website = website;
+        if (location) vendor.location = location;
+        if (address) vendor.address = address;
+        if (description) vendor.description = description;
+        vendor.verified = true
+
+        await vendor.save();
+
+        res.status(200).json(STATUS_200_WITH_DATA(vendor, true, "Vendor updated successfully"));
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json(STATUS_500);
+    }
+}
+
 module.exports = {
     saveVendor,
     updatePassword,
-    getVendorDetails
+    getVendorDetails,
+    updateVendor
 }

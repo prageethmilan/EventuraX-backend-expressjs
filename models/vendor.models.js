@@ -48,6 +48,11 @@ const vendorSchema = new mongoose.Schema({
             required: false,
             default: null
         },
+        address: {
+            type: String,
+            required: false,
+            default: null
+        },
         description: {
             type: String,
             required: false,
@@ -62,6 +67,10 @@ const vendorSchema = new mongoose.Schema({
             type: String,
             required: false,
             default: null
+        },
+        verified: {
+            type: Boolean,
+            default: false
         },
         logo: {type: String, default: null}
     }, {timestamps: true}
