@@ -145,7 +145,8 @@ const updateVendorLogo = async (req, res) => {
             return res.status(404).json(STATUS_400("Vendor not found", false));
         }
 
-        vendor.logo = `/uploads/${req.file.filename}`;
+        const serverUrl = `${req.protocol}://${req.get("host")}`;
+        vendor.logo = `${serverUrl}/uploads/${req.file.filename}`;
         await vendor.save();
 
         res.status(200).json(STATUS_200_WITH_DATA({logo: vendor.logo}, true, "Vendor logo updated successfully"));
