@@ -48,6 +48,40 @@ const saveVendor = async (req, resp) => {
     }
 };
 
+const updatePassword = async (req, resp) => {
+    try {
+        const {vendorId, currentPassword, newPassword} = req.body;
+
+        if (!vendorId || !currentPassword || !newPassword) {
+            return resp.status(400).json(STATUS_400("All fields are required", false));
+        }
+
+        const vendor = await Vendor.findById(vendorId);
+        if (!vendor) {
+            return resp.status(400).json(STATUS_400("Vendor not found!", false));
+        }
+
+        if (vendor.socialId !== null) {
+            return resp.status(400).json(STATUS_400("Cannot update password for social media signup", false));
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, vendor.password);
+        if (!isMatch) {
+            return resp.status(400).json(STATUS_400("Current password is incorrect", false));
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        vendor.password = await bcrypt.hash(newPassword, salt);
+        await vendor.save();
+
+        resp.status(200).json(STAddUS_200("Password updated successfully", true));
+    } catch (error) {
+        console.error(error);
+        resp.status(500).json(STATUS_500);
+    }
+};
+
 module.exports = {
-    saveVendor
+    saveVendor,
+    updatePassword
 }
