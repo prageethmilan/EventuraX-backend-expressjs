@@ -3,17 +3,18 @@ const Categories = require("../enums/categories");
 
 
 const advertisementSchema = new mongoose.Schema({
-        title: {
-            type: String,
+        vendorId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Vendor",
             required: true
         },
-        keywords: {
+        title: {
             type: String,
             required: true
         },
         description: {
             type: String,
-            required: true
+            required: false
         },
         category: {
             type: String,
@@ -40,7 +41,8 @@ const advertisementSchema = new mongoose.Schema({
         ],
         price: {
             type: Number,
-            required: false
+            required: false,
+            default: 0
         },
         paymentStatus: {
             type: String,

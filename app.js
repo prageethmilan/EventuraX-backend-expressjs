@@ -5,6 +5,7 @@ const path = require("path")
 const connectToDB = require("./config/db");
 const authRoutes = require('./route/auth')
 const vendorRoutes = require('./route/vendor')
+const advertisementRoutes = require('./route/advertisement')
 const BASE_PATH = '/api/v1'
 
 dotenv.config()
@@ -27,5 +28,7 @@ app.get(`${BASE_PATH}`, (req, res) => {
 
 app.use(`${BASE_PATH}/auth`, authRoutes)
 app.use(`${BASE_PATH}/vendor`, vendorRoutes)
+app.use(`${BASE_PATH}/advertisement`, advertisementRoutes)
+
 
 module.exports = {app, server}
