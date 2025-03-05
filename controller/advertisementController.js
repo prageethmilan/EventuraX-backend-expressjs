@@ -28,15 +28,14 @@ const saveAdvertisement = async (req, res) => {
         const serverUrl = `${req.protocol}://${req.get("host")}`;
         const images = req.files ? req.files.map(file => `${serverUrl}/uploads/${file.filename}`) : [];
 
-
         const advertisement = new Advertisement({
             vendorId,
             title,
             description: description || "",
             category,
-            isLimitedTimeOffer: isLimitedTimeOffer || false,
-            offerStartDate: isLimitedTimeOffer ? new Date(offerStartDate) : null,
-            offerEndDate: isLimitedTimeOffer ? new Date(offerEndDate) : null,
+            isLimitedTimeOffer: isLimitedTimeOffer === 1,
+            offerStartDate: isLimitedTimeOffer === 1 ? new Date(offerStartDate) : null,
+            offerEndDate: isLimitedTimeOffer === 1 ? new Date(offerEndDate) : null,
             images,
             price: price || 0,
             paymentStatus: "PENDING"
