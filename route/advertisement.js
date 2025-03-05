@@ -7,5 +7,6 @@ const paymentController = require("../controller/paymentController");
 
 router.post('/add', upload.array("images", 7), advertisementController.saveAdvertisement)
 router.post('/payment', paymentController.processPayment)
+router.put('/payment/verify', paymentController.verifyPayment)
 
 module.exports = router

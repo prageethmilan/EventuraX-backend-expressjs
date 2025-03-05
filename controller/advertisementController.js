@@ -35,11 +35,11 @@ const saveAdvertisement = async (req, res) => {
             description: description || "",
             category,
             isLimitedTimeOffer: isLimitedTimeOffer || false,
-            offerStartDate: isLimitedTimeOffer ? offerStartDate : null,
-            offerEndDate: isLimitedTimeOffer ? offerEndDate : null,
+            offerStartDate: isLimitedTimeOffer ? new Date(offerStartDate) : null,
+            offerEndDate: isLimitedTimeOffer ? new Date(offerEndDate) : null,
             images,
             price: price || 0,
-            paymentStatus: "PENDING" // ✅ Default payment status
+            paymentStatus: "PENDING"
         });
 
         const savedAd = await advertisement.save();
