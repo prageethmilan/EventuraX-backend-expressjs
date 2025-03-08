@@ -41,7 +41,7 @@ const getAllReviews = async (req, res) => {
             return res.status(400).json(STATUS_400("Vendor ID is required", false));
         }
 
-        const reviews = await Review.find({vendorId});
+        const reviews = await Review.find({vendorId}).sort({createdDate: -1});
 
         res.status(200).json(STATUS_200_WITH_DATA(reviews, true, "Reviews fetched successfully"));
     } catch (error) {
