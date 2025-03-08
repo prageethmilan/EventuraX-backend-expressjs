@@ -34,12 +34,12 @@ const getRecommendedAdvertisements = async (req, res) => {
 
                 if (!Array.isArray(parsedData)) {
                     headersSent = true;
-                    return res.status(500).json(STATUS_500({message: "Invalid AI Model Response", success: false}));
+                    return res.status(500).json(STATUS_500);
                 }
 
                 if (parsedData.length === 0) {
                     headersSent = true;
-                    return res.status(404).json(STATUS_400({message: "No top vendors found", success: false}));
+                    return res.status(404).json(STATUS_400("No top vendors found", false));
                 }
 
                 const topVendors = parsedData.slice(0, 2);
@@ -61,7 +61,7 @@ const getRecommendedAdvertisements = async (req, res) => {
             } catch (error) {
                 if (!headersSent) {
                     headersSent = true;
-                    return res.status(500).json(STATUS_500({message: "AI Model Response Error", success: false}));
+                    return res.status(500).json(STATUS_500);
                 }
             }
         });
@@ -69,13 +69,13 @@ const getRecommendedAdvertisements = async (req, res) => {
         pythonProcess.stderr.on("data", (error) => {
             if (!headersSent) {
                 headersSent = true;
-                return res.status(500).json(STATUS_500({message: "AI Model Error", success: false}));
+                return res.status(500).json(STATUS_500);
             }
         });
 
     } catch (error) {
         if (!res.headersSent) {
-            return res.status(500).json(STATUS_500({message: "Internal Server Error", success: false}));
+            return res.status(500).json(STATUS_500);
         }
     }
 };

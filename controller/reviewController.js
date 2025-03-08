@@ -29,7 +29,7 @@ const saveReview = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json(STATUS_500("Server error", false));
+        res.status(500).json(STATUS_500);
     }
 };
 
@@ -46,7 +46,7 @@ const getAllReviews = async (req, res) => {
         res.status(200).json(STATUS_200_WITH_DATA(reviews, true, "Reviews fetched successfully"));
     } catch (error) {
         console.error(error);
-        res.status(500).json(STATUS_500("Server error", false));
+        res.status(500).json(STATUS_500);
     }
 };
 

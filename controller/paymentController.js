@@ -45,7 +45,7 @@ const processPayment = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json(STATUS_500("Payment processing failed", false));
+        res.status(500).json(STATUS_500);
     }
 }
 

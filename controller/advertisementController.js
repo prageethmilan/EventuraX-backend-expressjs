@@ -56,7 +56,7 @@ const saveAdvertisement = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json(STATUS_500("Server error", false));
+        res.status(500).json(STATUS_500);
     }
 };
 
