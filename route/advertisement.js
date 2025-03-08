@@ -11,5 +11,6 @@ router.post('/payment', paymentController.processPayment)
 router.put('/payment/verify', paymentController.verifyPayment)
 router.get("/recommended-ads", recommendationController.getRecommendedAdvertisements);
 router.get("/getAllAds/:vendorId", advertisementController.getAllCompletedAdvertisementsByVendor)
+router.get('/getAllAdsForDashboard/:vendorId', advertisementController.getAllAdvertisementsForVendor)
 
 module.exports = router

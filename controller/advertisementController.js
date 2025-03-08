@@ -129,7 +129,41 @@ const getAllCompletedAdvertisementsByVendor = async (req, res) => {
     }
 };
 
+const getAllAdvertisementsForVendor = async (req, res) => {
+    try {
+        const {vendorId} = req.params;
+
+        if (!vendorId) {
+            return res.status(400).json(STATUS_400("Vendor ID is required", false));
+        }
+
+        const vendor = await Vendor.findById(vendorId);
+        if (!vendor) {
+            return res.status(404).json(STATUS_400("Vendor not found", false));
+        }
+
+        const advertisements = await Advertisement.find({vendorId})
+            .sort({createdAt: -1})
+            .lean();
+
+        const responseObject = {
+            vendor: {
+                name: vendor.name,
+                email: vendor.email,
+                mobileNumber: vendor.mobileNumber
+            },
+            advertisements
+        }
+
+        res.status(200).json(STATUS_200_WITH_DATA(responseObject, true, "Operation Successfully"));
+    } catch (error) {
+        console.error("❌ Error fetching advertisements:", error);
+        res.status(500).json(STATUS_500);
+    }
+}
+
 module.exports = {
     saveAdvertisement,
-    getAllCompletedAdvertisementsByVendor
+    getAllCompletedAdvertisementsByVendor,
+    getAllAdvertisementsForVendor
 };
