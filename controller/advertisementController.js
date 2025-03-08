@@ -2,6 +2,8 @@ const Advertisement = require("../models/advertisement.models");
 const Vendor = require("../models/vendor.models");
 const Review = require('../models/review.models')
 const {STATUS_500, STATUS_400, STATUS_200_WITH_DATA, STATUS_200} = require("../const/const");
+const path = require('path')
+const fs = require('fs')
 
 const saveAdvertisement = async (req, res) => {
     try {
@@ -213,9 +215,41 @@ const updateAdvertisement = async (req, res) => {
     }
 }
 
+const deleteAdvertisement = async (req, res) => {
+    try {
+        const {advertisementId} = req.params;
+
+        if (!advertisementId) {
+            return res.status(400).json(STATUS_400("Advertisement ID is required", false));
+        }
+
+        const existingAd = await Advertisement.findById(advertisementId);
+        if (!existingAd) {
+            return res.status(404).json(STATUS_400("Advertisement not found", false));
+        }
+
+        if (existingAd.images && existingAd.images.length > 0) {
+            existingAd.images.forEach(imageUrl => {
+                const filePath = path.join(__dirname, "../../uploads", path.basename(imageUrl));
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            });
+        }
+
+        await Advertisement.findByIdAndDelete(advertisementId);
+
+        res.status(200).json(STATUS_200("Advertisement deleted successfully", true));
+    } catch (error) {
+        console.error("❌ Error deleting advertisement:", error);
+        res.status(500).json(STATUS_500);
+    }
+};
+
 module.exports = {
     saveAdvertisement,
     getAllCompletedAdvertisementsByVendor,
     getAllAdvertisementsForVendor,
-    updateAdvertisement
+    updateAdvertisement,
+    deleteAdvertisement
 };

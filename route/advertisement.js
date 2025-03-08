@@ -13,5 +13,6 @@ router.get("/recommended-ads", recommendationController.getRecommendedAdvertisem
 router.get("/getAllAds/:vendorId", advertisementController.getAllCompletedAdvertisementsByVendor)
 router.get('/getAllAdsForDashboard/:vendorId', advertisementController.getAllAdvertisementsForVendor)
 router.put('/update/:advertisementId', upload.array("images", 10), advertisementController.updateAdvertisement)
+router.delete('/:advertisementId', advertisementController.deleteAdvertisement)
 
 module.exports = router
