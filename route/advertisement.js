@@ -10,5 +10,6 @@ router.post('/add', upload.array("images", 7), advertisementController.saveAdver
 router.post('/payment', paymentController.processPayment)
 router.put('/payment/verify', paymentController.verifyPayment)
 router.get("/recommended-ads", recommendationController.getRecommendedAdvertisements);
+router.get("/getAllAds/:vendorId", advertisementController.getAllCompletedAdvertisementsByVendor)
 
 module.exports = router
