@@ -6,11 +6,12 @@ const advertisementController = require('../controller/advertisementController')
 const paymentController = require("../controller/paymentController");
 const recommendationController = require("../controller/recommendationController");
 
-router.post('/add', upload.array("images", 7), advertisementController.saveAdvertisement)
+router.post('/add', upload.array("images", 10), advertisementController.saveAdvertisement)
 router.post('/payment', paymentController.processPayment)
 router.put('/payment/verify', paymentController.verifyPayment)
 router.get("/recommended-ads", recommendationController.getRecommendedAdvertisements);
 router.get("/getAllAds/:vendorId", advertisementController.getAllCompletedAdvertisementsByVendor)
 router.get('/getAllAdsForDashboard/:vendorId', advertisementController.getAllAdvertisementsForVendor)
+router.put('/update/:advertisementId', upload.array("images", 10), advertisementController.updateAdvertisement)
 
 module.exports = router

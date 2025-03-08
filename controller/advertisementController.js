@@ -1,7 +1,7 @@
 const Advertisement = require("../models/advertisement.models");
 const Vendor = require("../models/vendor.models");
 const Review = require('../models/review.models')
-const {STATUS_500, STATUS_400, STATUS_200_WITH_DATA} = require("../const/const");
+const {STATUS_500, STATUS_400, STATUS_200_WITH_DATA, STATUS_200} = require("../const/const");
 
 const saveAdvertisement = async (req, res) => {
     try {
@@ -162,8 +162,60 @@ const getAllAdvertisementsForVendor = async (req, res) => {
     }
 }
 
+const updateAdvertisement = async (req, res) => {
+    try {
+        const {advertisementId} = req.params;
+
+        if (!advertisementId) {
+            return res.status(400).json(STATUS_400("Advertisement ID is required", false));
+        }
+
+        const existingAd = await Advertisement.findById(advertisementId);
+        if (!existingAd) {
+            return res.status(404).json(STATUS_400("Advertisement not found", false));
+        }
+
+        const {
+            title,
+            description,
+            category,
+            isLimitedTimeOffer,
+            offerStartDate,
+            offerEndDate,
+            price,
+            paymentStatus
+        } = req.body;
+
+        let updatedImages = []
+        const serverUrl = `${req.protocol}://${req.get("host")}`;
+        if (req.files && req.files.length > 0) updatedImages = req.files.map(file => `${serverUrl}/uploads/${file.filename}`);
+
+        existingAd.title = title || existingAd.title;
+        existingAd.description = description || existingAd.description;
+        existingAd.category = category || existingAd.category;
+        existingAd.isLimitedTimeOffer = isLimitedTimeOffer !== undefined ? isLimitedTimeOffer : existingAd.isLimitedTimeOffer;
+        existingAd.offerStartDate = isLimitedTimeOffer && offerStartDate ? new Date(offerStartDate) : existingAd.offerStartDate;
+        existingAd.offerEndDate = isLimitedTimeOffer && offerEndDate ? new Date(offerEndDate) : existingAd.offerEndDate;
+        existingAd.price = price !== undefined ? price : existingAd.price;
+        if (paymentStatus !== undefined) {
+            existingAd.paymentStatus = paymentStatus;
+        }
+        if (req.files && req.files.length > 0) {
+            existingAd.images = updatedImages;
+        }
+
+        const updatedAd = await existingAd.save();
+
+        res.status(200).json(STATUS_200_WITH_DATA(updatedAd, true, "Advertisement updated successfully"));
+    } catch (error) {
+        console.error("❌ Error updating advertisement:", error);
+        res.status(500).json(STATUS_500);
+    }
+}
+
 module.exports = {
     saveAdvertisement,
     getAllCompletedAdvertisementsByVendor,
-    getAllAdvertisementsForVendor
+    getAllAdvertisementsForVendor,
+    updateAdvertisement
 };

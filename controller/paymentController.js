@@ -21,7 +21,7 @@ const processPayment = async (req, res) => {
             payment_method_types: [paymentMethod],
             mode: "payment",
             success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.CLIENT_URL}/listing-confirmation`,
+            cancel_url: `${process.env.CLIENT_URL}`,
             customer_email: advertisement.vendorId.email,
             line_items: [
                 {
