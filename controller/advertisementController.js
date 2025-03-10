@@ -246,10 +246,145 @@ const deleteAdvertisement = async (req, res) => {
     }
 };
 
+const getFilteredAdvertisements = async (req, res) => {
+    try {
+        const {
+            keyword,
+            location,
+            category,
+            minPrice,
+            maxPrice,
+            minRating,
+            maxRating,
+            sortByPrice,
+            page,
+            limit
+        } = req.query;
+
+        const filter = {paymentStatus: "COMPLETED"};
+
+        if (keyword) {
+            filter.$or = [
+                {title: {$regex: keyword, $options: "i"}},
+                {description: {$regex: keyword, $options: "i"}}
+            ];
+        }
+
+        if (category) {
+            filter.category = category;
+        }
+
+        if (minPrice !== undefined && maxPrice !== undefined) {
+            filter.price = {$gte: Number(minPrice), $lte: Number(maxPrice)};
+        } else if (minPrice !== undefined) {
+            filter.price = {$gte: Number(minPrice)};
+        } else if (maxPrice !== undefined) {
+            filter.price = {$lte: Number(maxPrice)};
+        }
+
+        let vendorIds = [];
+        if (location) {
+            const vendors = await Vendor.find({location});
+            vendorIds = vendors.map(v => v._id);
+            if (vendorIds.length > 0) {
+                filter.vendorId = {$in: vendorIds};
+            }
+        }
+
+        if (minRating !== undefined || maxRating !== undefined) {
+            const allVendors = await Vendor.find();
+
+            const matchedVendorIds = await Promise.all(
+                allVendors.map(async (vendor) => {
+                    const reviews = await Review.find({vendorId: vendor._id});
+                    const totalReviews = reviews.length;
+                    const averageRating = totalReviews
+                        ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+                        : 0;
+
+                    if (
+                        (minRating !== undefined ? averageRating >= minRating : true) &&
+                        (maxRating !== undefined ? averageRating <= maxRating : true)
+                    ) {
+                        return vendor._id.toString();
+                    }
+                    return null;
+                })
+            );
+
+            vendorIds = matchedVendorIds.filter(id => id !== null);
+            if (vendorIds.length > 0) {
+                filter.vendorId = {$in: vendorIds};
+            }
+        }
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        let query = Advertisement.find(filter)
+            .populate("vendorId")
+            .skip(skip)
+            .limit(Number(limit));
+
+        if (sortByPrice) {
+            query = query.sort({price: sortByPrice === "asc" ? 1 : -1});
+        } else {
+            query = query.sort({createdAt: -1});
+        }
+
+        const advertisements = await query;
+
+        const formattedAds = await Promise.all(
+            advertisements.map(async (ad) => {
+                const reviews = await Review.find({vendorId: ad.vendorId._id});
+                const totalReviews = reviews.length;
+                const averageRating = totalReviews
+                    ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+                    : 0;
+
+                return {
+                    _id: ad._id,
+                    title: ad.title,
+                    description: ad.description,
+                    category: ad.category,
+                    isLimitedTimeOffer: ad.isLimitedTimeOffer,
+                    offerStartDate: ad.offerStartDate,
+                    offerEndDate: ad.offerEndDate,
+                    images: ad.images,
+                    price: ad.price,
+                    createdAt: ad.createdAt,
+                    vendorId: ad.vendorId._id,
+                    vendorName: ad.vendorId.name,
+                    logo: ad.vendorId.logo,
+                    address: ad.vendorId.address,
+                    mobileNumber: ad.vendorId.mobileNumber,
+                    email: ad.vendorId.email,
+                    website: ad.vendorId.website,
+                    averageRating: Number(averageRating.toFixed(1)),
+                    totalReviews
+                };
+            })
+        );
+
+        const totalAdvertisements = await Advertisement.countDocuments(filter);
+
+        const responseData = {
+            advertisements: formattedAds,
+            currentPage: Number(page),
+            totalPages: Math.ceil(totalAdvertisements / limit)
+        };
+
+        res.status(200).json(STATUS_200_WITH_DATA(responseData, true, "Operation Successfully"));
+    } catch (error) {
+        console.error("❌ Error fetching advertisements:", error);
+        res.status(500).json(STATUS_500);
+    }
+};
+
 module.exports = {
     saveAdvertisement,
     getAllCompletedAdvertisementsByVendor,
     getAllAdvertisementsForVendor,
     updateAdvertisement,
-    deleteAdvertisement
+    deleteAdvertisement,
+    getFilteredAdvertisements
 };
