@@ -254,7 +254,6 @@ const getFilteredAdvertisements = async (req, res) => {
             category,
             minPrice,
             maxPrice,
-            minRating,
             maxRating,
             sortByPrice,
             page,
@@ -284,14 +283,21 @@ const getFilteredAdvertisements = async (req, res) => {
 
         let vendorIds = [];
         if (location) {
-            const vendors = await Vendor.find({location});
+            const vendors = await Vendor.find({
+                location: {$regex: `^${location}$`, $options: "i"}
+            });
+
             vendorIds = vendors.map(v => v._id);
+
+            // ✅ Fix: If no vendor matches, set to `null` to return no results
             if (vendorIds.length > 0) {
                 filter.vendorId = {$in: vendorIds};
+            } else {
+                filter.vendorId = null; // ✅ No vendors → No advertisements
             }
         }
 
-        if (minRating !== undefined || maxRating !== undefined) {
+        if (maxRating !== undefined) {
             const allVendors = await Vendor.find();
 
             const matchedVendorIds = await Promise.all(
@@ -302,10 +308,7 @@ const getFilteredAdvertisements = async (req, res) => {
                         ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
                         : 0;
 
-                    if (
-                        (minRating !== undefined ? averageRating >= minRating : true) &&
-                        (maxRating !== undefined ? averageRating <= maxRating : true)
-                    ) {
+                    if (maxRating !== undefined ? averageRating <= maxRating : true) {
                         return vendor._id.toString();
                     }
                     return null;
@@ -370,7 +373,8 @@ const getFilteredAdvertisements = async (req, res) => {
         const responseData = {
             advertisements: formattedAds,
             currentPage: Number(page),
-            totalPages: Math.ceil(totalAdvertisements / limit)
+            totalPages: Math.ceil(totalAdvertisements / limit),
+            totalElements: Number(totalAdvertisements)
         };
 
         res.status(200).json(STATUS_200_WITH_DATA(responseData, true, "Operation Successfully"));
