@@ -289,11 +289,10 @@ const getFilteredAdvertisements = async (req, res) => {
 
             vendorIds = vendors.map(v => v._id);
 
-            // ✅ Fix: If no vendor matches, set to `null` to return no results
             if (vendorIds.length > 0) {
                 filter.vendorId = {$in: vendorIds};
             } else {
-                filter.vendorId = null; // ✅ No vendors → No advertisements
+                filter.vendorId = null;
             }
         }
 
@@ -384,11 +383,77 @@ const getFilteredAdvertisements = async (req, res) => {
     }
 };
 
+const getAdvertisementDetails = async (req, res) => {
+    try {
+        const {advertisementId} = req.params;
+
+        if (!advertisementId) {
+            return res.status(400).json(STATUS_400("Advertisement ID is required", false));
+        }
+
+        const advertisement = await Advertisement.findById(advertisementId)
+            .populate("vendorId");
+
+        if (!advertisement) {
+            return res.status(404).json(STATUS_400("Advertisement not found", false));
+        }
+
+        const vendorId = advertisement.vendorId._id;
+
+        const totalCompletedAds = await Advertisement.countDocuments({
+            vendorId,
+            paymentStatus: "COMPLETED"
+        });
+
+        const reviews = await Review.find({vendorId});
+        const totalReviews = reviews.length;
+        const averageRating = totalReviews
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+            : 0;
+
+        const responseData = {
+            _id: advertisement._id,
+            title: advertisement.title,
+            description: advertisement.description,
+            category: advertisement.category,
+            isLimitedTimeOffer: advertisement.isLimitedTimeOffer,
+            offerStartDate: advertisement.offerStartDate || null,
+            offerEndDate: advertisement.offerEndDate || null,
+            images: advertisement.images || [],
+            price: advertisement.price,
+            paymentStatus: advertisement.paymentStatus,
+            createdAt: advertisement.createdAt,
+            vendor: advertisement.vendorId
+                ? {
+                    _id: advertisement.vendorId._id,
+                    name: advertisement.vendorId.name,
+                    email: advertisement.vendorId.email,
+                    mobileNumber: advertisement.vendorId.mobileNumber || "",
+                    address: advertisement.vendorId.address || "",
+                    location: advertisement.vendorId.location || "",
+                    logo: advertisement.vendorId.logo || null,
+                    website: advertisement.vendorId.website || "",
+                    verified: advertisement.vendorId.verified || false,
+                    totalCompletedAds,
+                    averageRating: Number(averageRating.toFixed(1)),
+                    totalReviews
+                }
+                : null
+        };
+
+        res.status(200).json(STATUS_200_WITH_DATA(responseData, true, "Operation Successfully"));
+    } catch (error) {
+        console.error("❌ Error fetching advertisement details:", error);
+        res.status(500).json(STATUS_500);
+    }
+};
+
 module.exports = {
     saveAdvertisement,
     getAllCompletedAdvertisementsByVendor,
     getAllAdvertisementsForVendor,
     updateAdvertisement,
     deleteAdvertisement,
-    getFilteredAdvertisements
+    getFilteredAdvertisements,
+    getAdvertisementDetails
 };

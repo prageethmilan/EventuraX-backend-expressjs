@@ -15,5 +15,6 @@ router.get('/getAllAdsForDashboard/:vendorId', advertisementController.getAllAdv
 router.put('/update/:advertisementId', upload.array("images", 10), advertisementController.updateAdvertisement);
 router.delete('/:advertisementId', advertisementController.deleteAdvertisement);
 router.get('/filter', advertisementController.getFilteredAdvertisements);
+router.get('/:advertisementId', advertisementController.getAdvertisementDetails)
 
 module.exports = router
