@@ -27,6 +27,7 @@ const login = async (req, resp) => {
             id: vendor._id,
             email: vendor.email,
             name: vendor.name,
+            logo: vendor.logo,
             isVerified: vendor.verified
         };
 
