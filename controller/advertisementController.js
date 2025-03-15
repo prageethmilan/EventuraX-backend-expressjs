@@ -196,8 +196,12 @@ const updateAdvertisement = async (req, res) => {
         existingAd.description = description || existingAd.description;
         existingAd.category = category || existingAd.category;
         existingAd.isLimitedTimeOffer = isLimitedTimeOffer !== undefined ? isLimitedTimeOffer : existingAd.isLimitedTimeOffer;
-        existingAd.offerStartDate = isLimitedTimeOffer && offerStartDate ? new Date(offerStartDate) : existingAd.offerStartDate;
-        existingAd.offerEndDate = isLimitedTimeOffer && offerEndDate ? new Date(offerEndDate) : existingAd.offerEndDate;
+        existingAd.offerStartDate = isLimitedTimeOffer && offerStartDate && offerStartDate !== 'null'
+            ? new Date(offerStartDate)
+            : existingAd.offerStartDate;
+        existingAd.offerEndDate = isLimitedTimeOffer && offerEndDate && offerEndDate !== 'null'
+            ? new Date(offerEndDate)
+            : existingAd.offerEndDate;
         existingAd.price = price !== undefined ? price : existingAd.price;
         if (paymentStatus !== undefined) {
             existingAd.paymentStatus = paymentStatus;
