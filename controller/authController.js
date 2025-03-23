@@ -46,7 +46,7 @@ const login = async (req, resp) => {
 
 const socialLogin = async (req, res) => {
     try {
-        const {email, name, googleId, facebookId, twitterId, socialId} = req.body;
+        const {email, name, googleId, facebookId, twitterId, socialId, logo} = req.body;
 
         let vendor = await Vendor.findOne({socialId});
         if (!vendor) {
@@ -57,6 +57,7 @@ const socialLogin = async (req, res) => {
                 googleId: googleId || null,
                 facebookId: facebookId || null,
                 twitterId: twitterId || null,
+                logo: logo || null,
                 socialId
             });
 
@@ -67,6 +68,7 @@ const socialLogin = async (req, res) => {
             id: vendor._id,
             email: vendor.email,
             name: vendor.name,
+            logo: vendor.logo,
             socialId: vendor.socialId,
             isVerified: vendor.verified
         }
