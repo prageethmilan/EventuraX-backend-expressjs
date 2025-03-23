@@ -63,19 +63,21 @@ const socialLogin = async (req, res) => {
             await vendor.save();
         }
 
+        const payload = {
+            id: vendor._id,
+            email: vendor.email,
+            name: vendor.name,
+            socialId: vendor.socialId,
+            isVerified: vendor.verified
+        }
+
         const token = jwt.sign(
-            {
-                id: vendor._id,
-                email: vendor.email,
-                name: vendor.name,
-                socialId: vendor.socialId,
-                isVerified: vendor.verified
-            },
+            payload,
             process.env.JWT_SECRET_KEY,
             {expiresIn: '30d'}
         );
 
-        res.status(200).json({message: 'Login successful', access_token: token, vendor, success: true});
+        res.status(200).json({message: 'Login successful', access_token: token, vendor: payload, success: true});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: 'Server error'});
