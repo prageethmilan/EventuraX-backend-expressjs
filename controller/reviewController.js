@@ -6,7 +6,7 @@ const saveReview = async (req, res) => {
     try {
         const {vendorId, userName, userEmail, reviewText, rating} = req.body;
 
-        if (!vendorId || !userName || !userEmail || !reviewText || !rating) {
+        if (!vendorId || !userName || !userEmail || !reviewText) {
             return res.status(400).json(STATUS_400("All fields are required", false));
         }
 
