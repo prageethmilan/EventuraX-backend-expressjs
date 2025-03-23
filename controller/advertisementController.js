@@ -329,6 +329,7 @@ const getFilteredAdvertisements = async (req, res) => {
         let query = Advertisement.find(filter)
             .populate("vendorId")
             .skip(skip)
+            .sort({createdAt: -1})
             .limit(Number(limit));
 
         if (sortByPrice) {
