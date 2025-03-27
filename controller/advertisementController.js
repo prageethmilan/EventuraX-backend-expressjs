@@ -259,7 +259,6 @@ const getFilteredAdvertisements = async (req, res) => {
             minPrice,
             maxPrice,
             maxRating,
-            sortByPrice,
             page,
             limit
         } = req.query;
@@ -331,12 +330,6 @@ const getFilteredAdvertisements = async (req, res) => {
             .skip(skip)
             .sort({createdAt: -1})
             .limit(Number(limit));
-
-        if (sortByPrice) {
-            query = query.sort({price: sortByPrice === "asc" ? 1 : -1});
-        } else {
-            query = query.sort({createdAt: -1});
-        }
 
         const advertisements = await query;
 
